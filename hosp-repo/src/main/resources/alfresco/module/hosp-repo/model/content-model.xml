@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model name="ma:medadsModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+
+    <!-- Optional meta-data about the model -->
+    <description>MedAds Model</description>
+    <author>Test Name</author>
+    <version>1.0</version>
+
+    <imports>
+        <!-- Import Alfresco Dictionary Definitions -->
+        <import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d"/>
+        <!-- Import Alfresco Content Domain Model Definitions -->
+        <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
+        <!-- Import Alfresco System Model Definitions -->
+        <import uri="http://www.alfresco.org/model/system/1.0" prefix="sys"/>
+    </imports>
+
+    <namespaces>
+        <namespace uri="http://www.medads.com/model/content/1.0" prefix="ma"/>
+    </namespaces>
+
+    <constraints>
+        <constraint>
+        </constraint>
+    </constraints>
+
+    <!-- ===============================================================================================================
+        Constraints, Types, and Aspects go here...
+        -->
+
+    <types>
+        <!-- Enterprise-wide generic document type -->
+        <type name="ma:appointment">
+            <title>Appointment Date and Time</title>
+            <parent>cm:content</parent>
+            <properties>
+                <property name="ma:date">
+                    <type>d:datetime</type>
+                </property>
+            </properties>
+            <associations>
+                <association name="ma:relatedUsers">
+                    <title>Related User</title>
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>true</many>
+                    </source>
+                    <target>
+                        <class>cm:person</class>
+                        <mandatory>true</mandatory>
+                        <many>true</many>
+                    </target>
+                </association>
+            </associations>
+        </type>
+
+    </types>
+
+    <aspects>
+        <!-- A document can have security classification applied and
+             faceted search is specifically enabled for best performance and we change
+             default index config to not tokenize the value. -->
+        <aspect name="">
+            
+        </aspect>
+    </aspects>
+
+</model>
