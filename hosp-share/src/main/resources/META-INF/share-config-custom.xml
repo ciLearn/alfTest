@@ -1,0 +1,65 @@
+<!-- Share configuration related to this particular Share module extension, such as:
+     - Doclib action config
+     - Form config
+     - Aspect and Type config
+     - Advanced Search
+
+    Note. Any configuration related to the whole Share.war webapp
+           (i.e. not specific to this share extension) should be
+            placed in the environment specific config file:
+             alfresco/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+     -->
+<alfresco-config>
+    <config evaluator="node-type" condition="mad:start" replace="true">
+        <property-sheet>
+            <separator name="sep1" display-label-id="Start workflow window" component-generator="HeaderSeparatorGenerator" />
+        </property-sheet>
+    </config>
+
+    <config evaluator="node-type" condition="mad:fillblank" replace="true">
+        <property-sheet>
+            <separator name="sep1" display-label-id="Fill blank" component-generator="HeaderSeparatorGenerator" />
+            <show-association name="mad:patient"/>
+            <show-association name="mad:doctor"/>
+            <show-association name="mad:appointmentDate"/>
+            <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
+        </property-sheet>
+    </config>
+
+    <config evaluator="node-type" condition="mad:checktask" replace="true">
+        <property-sheet>
+            <separator name="sep1" display-label-id="Patient info" component-generator="HeaderSeparatorGenerator" />
+            <show-association name="mad:patient"/>
+            <show-association name="mad:doctor"/>
+            <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
+            <separator name="sep2" display-label-id="Set diagnosis and prescriptions" component-generator="HeaderSeparatorGenerator" />
+            <show-property name="mad:diagnosis" component-generator="TextAreaGenerator" />
+            <show-property name="mad:prescriptions" component-generator="TextAreaGenerator" />
+            <show-property name="mad:appOutcome" />
+        </property-sheet>
+    </config>
+
+    <config evaluator="node-type" condition="mad:correction" replace="true">
+        <property-sheet>
+            <separator name="sep1" display-label-id="Fill blank" component-generator="HeaderSeparatorGenerator" />
+            <show-association name="mad:patient"/>
+            <show-association name="mad:doctor"/>
+            <show-association name="mad:appointmentDate"/>
+            <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
+        </property-sheet>
+    </config>
+
+    <config evaluator="node-type" condition="mad:acknowledgement" replace="true">
+        <property-sheet>
+            <separator name="sep1" display-label-id="Patient info" component-generator="HeaderSeparatorGenerator" />
+            <show-association name="mad:patient"/>
+            <show-association name="mad:doctor"/>
+            <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
+            <separator name="sep2" display-label-id="Diagnos and prescriptions" component-generator="HeaderSeparatorGenerator" />
+            <show-property name="mad:diagnosis" component-generator="TextAreaGenerator" />
+            <show-property name="mad:prescriptions" component-generator="TextAreaGenerator" />
+        </property-sheet>
+    </config>
+
+
+</alfresco-config>
