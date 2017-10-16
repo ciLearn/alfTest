@@ -19,17 +19,11 @@
         <namespace uri="http://www.medads.com/model/content/1.0" prefix="ma"/>
     </namespaces>
 
-    <constraints>
-        <constraint>
-        </constraint>
-    </constraints>
-
     <!-- ===============================================================================================================
         Constraints, Types, and Aspects go here...
         -->
 
     <types>
-        <!-- Enterprise-wide generic document type -->
         <type name="ma:appointment">
             <title>Appointment Date and Time</title>
             <parent>cm:content</parent>
@@ -55,14 +49,5 @@
         </type>
 
     </types>
-
-    <aspects>
-        <!-- A document can have security classification applied and
-             faceted search is specifically enabled for best performance and we change
-             default index config to not tokenize the value. -->
-        <aspect name="">
-            
-        </aspect>
-    </aspects>
 
 </model>

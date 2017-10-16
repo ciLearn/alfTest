@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="setAppointment" name="Set Appointment" isExecutable="true">
+  
+    <startEvent id="start" name="Start" activiti:formKey="mad:start">
+    </startEvent>
+    
+    <sequenceFlow id="flow1" sourceRef="start" targetRef="fillblank"></sequenceFlow>
+    
+    <userTask id="fillblank" name="Fill Blank Task" activiti:formKey="mad:fillblank" activiti:assignee="${initiator.properties.userName}">
+    <extensionElements>				
+				<activiti:taskListener event="create" 
+					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+							<!-- task.setVariable('mad_patient',initiator.properties.userName;) -->
+							execution.setVariable('patient', initiator.properties.userName);
+						</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>				
+				<activiti:taskListener event="complete" 
+					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+							var doctor = task.getVariable('mad_doctor'); 
+							execution.setVariable('doctor', doctor.properties.userName);
+							execution.setVariable('appointment', task.getVariable('mad_appointment'));
+							execution.setVariable('complaints',task.getVariable('mad_complaints').properties.complaine);
+						</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>
+			</extensionElements>			
+    </userTask>   
+    
+    <sequenceFlow id="flow6" sourceRef="fillblank" targetRef="checktask"></sequenceFlow>    
+    
+    <userTask id="checktask" name="Fill out the results" activiti:formKey="mad:checktask" activiti:assignee="${doctor}">
+    <extensionElements>				
+				<activiti:taskListener event="create" 
+					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+						</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>				
+				<activiti:taskListener event="complete" 
+					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+							execution.setVariable('dir_appOutcome', task.getVariable('mad_appOutcome'));
+							execution.setVariable('diagnosis', task.getVariable('mad_diagnosis'));
+							execution.setVariable('prescriptions',task.getVariable('mad_prescriptions'));
+						</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>
+			</extensionElements>			
+    </userTask>
+    
+    <sequenceFlow id="flow3" sourceRef="checktask" targetRef="exclusivegateway1"></sequenceFlow>
+    
+    <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+    
+    <sequenceFlow id="flow4" sourceRef="exclusivegateway1" targetRef="correction">
+    <conditionExpression xsi:type="tFormalExpression">${mad_appOutcome == 'reject'}</conditionExpression>
+    </sequenceFlow>
+    
+    <userTask id="correction" name="Request correction" activiti:formKey="mad:correction" activiti:assignee="${patient}">
+    <extensionElements>				
+				<activiti:taskListener event="create" 
+					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+							task.setVariable('mad_doctor',execution.getVariable('doctor'));
+							task.setVariable('mad_appointment',execution.getVariable('appointment'));
+							<!--  task.setVariable('mad_complaints',execution.getVariable('complaints'));-->
+						</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>				
+				<activiti:taskListener event="complete" 
+					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+							var doctor = task.getVariable('mad_doctor'); 
+							execution.setVariable('doctor', doctor.properties.userName);
+							execution.setVariable('complaints',task.getVariable('mad_complaints').properties.complaine);
+						</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>
+			</extensionElements>	
+    </userTask>
+    
+    <sequenceFlow id="flow5" sourceRef="correction" targetRef="checktask"></sequenceFlow>       
+    
+    <userTask id="acknowledgement" name="Results acknowledgement" activiti:formKey="mad:acknowledgement" activiti:assignee="${patient}"></userTask>
+    
+    <sequenceFlow id="flow7" sourceRef="exclusivegateway1" targetRef="acknowledgement">
+    <conditionExpression xsi:type="tFormalExpression">${mad_appOutcome == 'approve'}</conditionExpression>
+    </sequenceFlow>
+    
+    <sequenceFlow id="flow8" sourceRef="acknowledgement" targetRef="end"></sequenceFlow>
+    
+    <sequenceFlow id="flow9" sourceRef="correction" targetRef="end"></sequenceFlow>
+    
+    <endEvent id="end" name="End"></endEvent>   
+
+    
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_setAppointment">
+    <bpmndi:BPMNPlane bpmnElement="setAppointment" id="BPMNPlane_setAppointment">
+      <bpmndi:BPMNShape bpmnElement="start" id="BPMNShape_start">
+        <omgdc:Bounds height="35.0" width="35.0" x="17.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="fillblank" id="BPMNShape_fillblank">
+        <omgdc:Bounds height="55.0" width="105.0" x="117.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="checktask" id="BPMNShape_checktask">
+        <omgdc:Bounds height="55.0" width="105.0" x="203.0" y="290.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="383.0" y="297.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="correction" id="BPMNShape_correction">
+        <omgdc:Bounds height="55.0" width="105.0" x="351.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="acknowledgement" id="BPMNShape_acknowledgement">
+        <omgdc:Bounds height="55.0" width="105.0" x="490.0" y="90.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="end" id="BPMNShape_end">
+        <omgdc:Bounds height="35.0" width="35.0" x="640.0" y="100.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="52.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="117.0" y="117.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="308.0" y="317.0"></omgdi:waypoint>
+        <omgdi:waypoint x="383.0" y="317.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow4" id="BPMNEdge_flow4">
+        <omgdi:waypoint x="403.0" y="297.0"></omgdi:waypoint>
+        <omgdi:waypoint x="403.0" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="351.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="255.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="255.0" y="290.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="169.0" y="145.0"></omgdi:waypoint>
+        <omgdi:waypoint x="169.0" y="316.0"></omgdi:waypoint>
+        <omgdi:waypoint x="203.0" y="317.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow7" id="BPMNEdge_flow7">
+        <omgdi:waypoint x="423.0" y="317.0"></omgdi:waypoint>
+        <omgdi:waypoint x="542.0" y="316.0"></omgdi:waypoint>
+        <omgdi:waypoint x="542.0" y="145.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow8" id="BPMNEdge_flow8">
+        <omgdi:waypoint x="595.0" y="117.0"></omgdi:waypoint>
+        <omgdi:waypoint x="640.0" y="117.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow9" id="BPMNEdge_flow9">
+        <omgdi:waypoint x="403.0" y="90.0"></omgdi:waypoint>
+        <omgdi:waypoint x="403.0" y="44.0"></omgdi:waypoint>
+        <omgdi:waypoint x="537.0" y="44.0"></omgdi:waypoint>
+        <omgdi:waypoint x="655.0" y="44.0"></omgdi:waypoint>
+        <omgdi:waypoint x="657.0" y="100.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

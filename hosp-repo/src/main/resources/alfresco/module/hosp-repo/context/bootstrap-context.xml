@@ -15,23 +15,24 @@
                 <value>alfresco/module/${project.artifactId}/model/workflow-model.xml</value>
             </list>
         </property>
-        <property name="labels">
-            <list>
-                <!-- Bootstrap Resource Bundles for the content model types, aspects, properties etc -->
-                <value>alfresco/module/${project.artifactId}/messages/content-model</value>
-            </list>
-        </property>
     </bean>
 
-    <bean id="medads.sampleprocess.workflowBootstrap" parent="workflowDeployer">
+    <bean id="hosp-repo.workflowBootstrap" parent="workflowDeployer">
         <property name="workflowDefinitions">
             <list>
                 <props>
                     <prop key="engineId">activiti</prop>
-                    <prop key="location">alfresco/module/${project.artifactId}/workflow/sample-process.bpmn20.xml</prop>
+                    <prop key="location">alfresco/module/${project.artifactId}/workflow/setAppointment.bpmn</prop>
                     <prop key="mimetype">text/xml</prop>
+                    <prop key="redeploy">true</prop>
                 </props>
             </list>
         </property>
+        <property name="labels">
+            <list>
+                <value>alfresco.module.${project.artifactId}.messages.workflow_loc</value>
+            </list>
+        </property>
     </bean>
+
 </beans>

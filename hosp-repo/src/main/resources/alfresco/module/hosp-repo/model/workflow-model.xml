@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model name="acmew:workflowModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
+<model name="mad:workflowModel" xmlns="http://www.alfresco.org/model/dictionary/1.0">
     <!-- Optional meta-data about the model -->
-    <description>Sample Workflow Model</description>
-    <author>My Name</author>
+    <description>Set Appointment Workflow model</description>
+    <author>Test Name</author>
     <version>1.0</version>
 
     <imports>
@@ -12,6 +12,7 @@
         <import uri="http://www.alfresco.org/model/content/1.0" prefix="cm"/>
         <!-- Import Alfresco Workflow Model Definitions -->
         <import uri="http://www.alfresco.org/model/bpm/1.0" prefix="bpm"/>
+        <import uri="http://www.medads.com/model/content/1.0" prefix="ma"/>
     </imports>
 
     <!-- Custom namespace for your domain -->
@@ -22,6 +23,141 @@
     <!-- ===============================================================================================================
         Constraints, Types, and Aspects go here...
         -->
+    <types>
+        <type name="mad:start">
+            <parent>bpm:startTask</parent>
+        </type>
+
+        <type name="mad:fillblank">
+            <parent>bpm:workflowTask</parent>
+            <mandatory-aspects>
+                <aspect>mad:patient</aspect>
+                <aspect>mad:doctor</aspect>
+                <aspect>mad:appointmentDate</aspect>
+                <aspect>mad:complaints</aspect>
+            </mandatory-aspects>
+        </type>
+
+        <type name="mad:checktask">
+            <parent>bpm:activitiOutcomeTask</parent>
+            <properties>
+                <property name="mad:appOutcome">
+                    <type>d:text</type>
+                    <default>reject</default>
+                    <constraints>
+                        <constraint name="mad:propAppOutcome" type="LIST">
+                            <parameter name="allowedValues">
+                                <list>
+                                    <value>approve</value>
+                                    <value>reject</value>
+                                </list>
+                            </parameter>
+                            <parameter name="caseSensitive">
+                                <value>true</value>
+                            </parameter>
+                        </constraint>
+                    </constraints>
+                </property>
+            </properties>
+            <mandatory-aspects>
+                <aspect>mad:patient</aspect>
+                <aspect>mad:doctor</aspect>
+                <aspect>mad:complaints</aspect>
+                <aspect>mad:prescriptions</aspect>
+                <aspect>mad:diagnosis</aspect>
+            </mandatory-aspects>
+        </type>
+
+        <type name="mad:correction">
+            <parent>bpm:workflowTask</parent>
+            <mandatory-aspects>
+                <aspect>mad:patient</aspect>
+                <aspect>mad:doctor</aspect>
+                <aspect>mad:appointmentDate</aspect>
+                <aspect>mad:complaints</aspect>
+            </mandatory-aspects>
+        </type>
+
+        <type name="mad:acknowledgement">
+            <parent>bpm:workflowTask</parent>
+            <mandatory-aspects>
+                <aspect>mad:patient</aspect>
+                <aspect>mad:doctor</aspect>
+                <aspect>mad:complaints</aspect>
+                <aspect>mad:prescriptions</aspect>
+                <aspect>mad:diagnosis</aspect>
+            </mandatory-aspects>
+        </type>
+    </types>
+
+    <aspects>
+        <aspect name="mad:patient">
+            <associations>
+                <association name="mad:patient">
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </source>
+                    <target>
+                        <class>cm:person</class>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </target>
+                </association>
+            </associations>
+        </aspect>
+        <aspect name="mad:doctor">
+            <associations>
+                <association name="mad:doctor">
+                    <source>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </source>
+                    <target>
+                        <class>cm:person</class>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </target>
+                </association>
+            </associations>
+        </aspect>
+        <aspect name="mad:appointmentDate">
+            <associations>
+                <association name="mad:appointmentDate">
+                    <target>
+                        <class>ma:appointment</class>
+                        <mandatory>true</mandatory>
+                        <many>false</many>
+                    </target>
+                </association>
+            </associations>
+        </aspect>
+        <aspect name="mad:complaints">
+            <properties>
+                <property name="mad:complaine">
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                </property>
+            </properties>
+        </aspect>
+        <aspect name="mad:diagnosis">
+            <properties>
+                <property name="mad:diagnos">
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                </property>
+            </properties>
+        </aspect>
+        <aspect name="mad:prescriptions">
+            <properties>
+                <property name="mad:prescription">
+                    <type>d:text</type>
+                    <mandatory>false</mandatory>
+                </property>
+            </properties>
+        </aspect>
+
+    </aspects>
 
 </model>
 
