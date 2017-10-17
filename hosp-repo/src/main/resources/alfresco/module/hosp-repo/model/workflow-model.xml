@@ -134,7 +134,7 @@
         </aspect>
         <aspect name="mad:complaints">
             <properties>
-                <property name="mad:complaine">
+                <property name="mad:complaints">
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                 </property>
@@ -142,7 +142,7 @@
         </aspect>
         <aspect name="mad:diagnosis">
             <properties>
-                <property name="mad:diagnos">
+                <property name="mad:diagnosis">
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                 </property>
@@ -150,7 +150,7 @@
         </aspect>
         <aspect name="mad:prescriptions">
             <properties>
-                <property name="mad:prescription">
+                <property name="mad:prescriptions">
                     <type>d:text</type>
                     <mandatory>false</mandatory>
                 </property>

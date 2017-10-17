@@ -13,8 +13,8 @@
 					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
-							<!-- task.setVariable('mad_patient',initiator.properties.userName;) -->
-							execution.setVariable('patient', initiator.properties.userName);
+							task.setVariable('mad_patient',initiator);
+							execution.setVariable('patient', initiator);
 						</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>				
@@ -22,10 +22,11 @@
 					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
-							var doctor = task.getVariable('mad_doctor'); 
-							execution.setVariable('doctor', doctor.properties.userName);
-							execution.setVariable('appointment', task.getVariable('mad_appointment'));
-							execution.setVariable('complaints',task.getVariable('mad_complaints').properties.complaine);
+							var doctor = task.getVariable('mad_doctor');
+							var complaints = task.getVariable('mad_complaints'); 
+							execution.setVariable('doctor', doctor);
+							execution.setVariable('complaints',complaints);
+							logger.log("Current complaints: " + complaints);
 						</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
@@ -34,12 +35,15 @@
     
     <sequenceFlow id="flow6" sourceRef="fillblank" targetRef="checktask"></sequenceFlow>    
     
-    <userTask id="checktask" name="Fill out the results" activiti:formKey="mad:checktask" activiti:assignee="${doctor}">
+    <userTask id="checktask" name="Fill out the results" activiti:formKey="mad:checktask" activiti:assignee="${doctor.properties.userName}">
     <extensionElements>				
 				<activiti:taskListener event="create" 
 					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
+						task.setVariable('mad_patient',execution.getVariable('patient'));
+						task.setVariable('mad_doctor',execution.getVariable('doctor'));
+						task.setVariable('mad_complaints',execution.getVariable('complaints'));
 						</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>				
@@ -47,7 +51,7 @@
 					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
-							execution.setVariable('dir_appOutcome', task.getVariable('mad_appOutcome'));
+							execution.setVariable('mad_appOutcome', task.getVariable('mad_appOutcome'));
 							execution.setVariable('diagnosis', task.getVariable('mad_diagnosis'));
 							execution.setVariable('prescriptions',task.getVariable('mad_prescriptions'));
 						</activiti:string>
@@ -64,15 +68,15 @@
     <conditionExpression xsi:type="tFormalExpression">${mad_appOutcome == 'reject'}</conditionExpression>
     </sequenceFlow>
     
-    <userTask id="correction" name="Request correction" activiti:formKey="mad:correction" activiti:assignee="${patient}">
+    <userTask id="correction" name="Request correction" activiti:formKey="mad:correction" activiti:assignee="${patient.properties.userName}">
     <extensionElements>				
 				<activiti:taskListener event="create" 
 					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
+							task.setVariable('mad_patient',execution.getVariable('patient'));
 							task.setVariable('mad_doctor',execution.getVariable('doctor'));
-							task.setVariable('mad_appointment',execution.getVariable('appointment'));
-							<!--  task.setVariable('mad_complaints',execution.getVariable('complaints'));-->
+							task.setVariable('mad_complaints',execution.getVariable('complaints'));
 						</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>				
@@ -80,9 +84,9 @@
 					class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
 					<activiti:field name="script">
 						<activiti:string>
-							var doctor = task.getVariable('mad_doctor'); 
-							execution.setVariable('doctor', doctor.properties.userName);
-							execution.setVariable('complaints',task.getVariable('mad_complaints').properties.complaine);
+							var complaints = task.getVariable('mad_complaints'); 
+							execution.setVariable('appointment', task.getVariable('mad_appointment'));
+							execution.setVariable('complaints',complaints);
 						</activiti:string>
 					</activiti:field>
 				</activiti:taskListener>
@@ -91,7 +95,19 @@
     
     <sequenceFlow id="flow5" sourceRef="correction" targetRef="checktask"></sequenceFlow>       
     
-    <userTask id="acknowledgement" name="Results acknowledgement" activiti:formKey="mad:acknowledgement" activiti:assignee="${patient}"></userTask>
+    <userTask id="acknowledgement" name="Results acknowledgement" activiti:formKey="mad:acknowledgement" activiti:assignee="${patient.properties.userName}">
+    <extensionElements>
+                 <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+					<activiti:field name="script">
+						<activiti:string>
+							task.setVariable('mad_diagnosis',execution.getVariable('patient'));
+							task.setVariable('mad_prescriptions',execution.getVariable('doctor'));
+							task.setVariable('mad_complaints',execution.getVariable('complaints'));
+						</activiti:string>
+					</activiti:field>
+				</activiti:taskListener>
+				</extensionElements>
+    </userTask>
     
     <sequenceFlow id="flow7" sourceRef="exclusivegateway1" targetRef="acknowledgement">
     <conditionExpression xsi:type="tFormalExpression">${mad_appOutcome == 'approve'}</conditionExpression>

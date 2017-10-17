@@ -10,6 +10,17 @@
              alfresco/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
      -->
 <alfresco-config>
+    <config evaluator="string-compare" condition="DocumentLibrary">
+        <types>
+            <type name="cm:content">
+                <subtype name="ma:appointment" />
+            </type>
+            <type name="ma:appointment">
+            </type>
+        </types>
+    </config>
+
+
     <config evaluator="node-type" condition="mad:start" replace="true">
         <property-sheet>
             <separator name="sep1" display-label-id="Start workflow window" component-generator="HeaderSeparatorGenerator" />
@@ -31,10 +42,10 @@
             <separator name="sep1" display-label-id="Patient info" component-generator="HeaderSeparatorGenerator" />
             <show-association name="mad:patient"/>
             <show-association name="mad:doctor"/>
-            <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
+            <show name="mad:complaints"/>
             <separator name="sep2" display-label-id="Set diagnosis and prescriptions" component-generator="HeaderSeparatorGenerator" />
-            <show-property name="mad:diagnosis" component-generator="TextAreaGenerator" />
-            <show-property name="mad:prescriptions" component-generator="TextAreaGenerator" />
+            <show name="mad:diagnosis" component-generator="TextAreaGenerator" />
+            <show name="mad:prescriptions" component-generator="TextAreaGenerator" />
             <show-property name="mad:appOutcome" />
         </property-sheet>
     </config>
@@ -54,12 +65,165 @@
             <separator name="sep1" display-label-id="Patient info" component-generator="HeaderSeparatorGenerator" />
             <show-association name="mad:patient"/>
             <show-association name="mad:doctor"/>
-            <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
+            <show-property name="mad:complaints"/>
             <separator name="sep2" display-label-id="Diagnos and prescriptions" component-generator="HeaderSeparatorGenerator" />
-            <show-property name="mad:diagnosis" component-generator="TextAreaGenerator" />
-            <show-property name="mad:prescriptions" component-generator="TextAreaGenerator" />
+            <show-property name="mad:diagnosis"/>
+            <show-property name="mad:prescriptions"/>
         </property-sheet>
     </config>
 
+    <!--Appearance-->
+    <config evaluator="string-compare" condition="activiti$setAppointment">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bpm:workflowDescription"/>
+                </field-visibility>
+                <appearance>
+                    <set id="" appearance="title" label-id="workflow.set.general" />
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+    <!-- Start-->
+    <config evaluator="task-type" condition="mad:start">
+        <forms>
+            <form>
+                <field-visibility>
+                </field-visibility>
+                <appearance>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+    <!-- Fill Blank-->
+    <config evaluator="task-type" condition="mad:fillblank">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="mad:patient"/>
+                    <show id="mad:doctor"/>
+                    <show id="mad:appointmentDate"/>
+                    <show id="mad:complaints" />
+                    <show id="transitions" />
+                </field-visibility>
+                <appearance>
+
+                    <set id="" appearance="title" label-id="workflow.set.general" />
+                    <set id="trans" appearance="" />
+
+                    <field id="mad:patient" label-id="mad_patient" read-only="true"/>
+                    <field id="mad:doctor" label-id="mad_doctor"/>
+                    <field id="mad:appointmentDate" label-id="mad_appointmentDate"/>
+                    <field id="mad:complaints" label-id="mad_complaints">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="style">width: 95%</control-param>
+                        </control>
+                    </field>
+                    <field id="transitions" set="trans" />
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+    <!--Check Task -->
+    <config evaluator="task-type" condition="mad:checktask">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="mad:patient"/>
+                    <show id="mad:doctor"/>
+                    <show id="mad:complaints" />
+                    <show id="mad:diagnosis" />
+                    <show id="mad:prescriptions" />
+                    <show id="mad:appOutcome" />
+                </field-visibility>
+                <appearance>
+
+                    <set id="" appearance="title" label-id="workflow.set.general" />
+
+                    <field id="mad:patient" label-id="mad_patient" read-only="true"/>
+                    <field id="mad:doctor" label-id="mad_doctor" read-only="true"/>
+                    <field id="mad:complaints" label-id="mad_complaints" read-only="true">
+                    </field>
+                    <field id="mad:diagnosis" label-id="mad_diagnosis">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="style">width: 95%</control-param>
+                        </control>
+                    </field>
+                    <field id="mad:prescriptions" label-id="mad_prescriptions">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="style">width: 95%</control-param>
+                        </control>
+                    </field>
+                    <field id="mad:appOutcome" label-id="workflow.field.outcome" >
+                        <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+                    </field>
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+    <!--Correction-->
+    <config evaluator="task-type" condition="mad:correction">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="mad:patient"/>
+                    <show id="mad:doctor"/>
+                    <show id="mad:appointmentDate"/>
+                    <show id="mad:complaints" />
+                    <show id="transitions" />
+                </field-visibility>
+                <appearance>
+
+                    <set id="" appearance="title" label-id="workflow.set.general" />
+                    <set id="trans" appearance="" />
+
+                    <field id="mad:patient" label-id="mad_patient" read-only="true"/>
+                    <field id="mad:doctor" label-id="mad_doctor"/>
+                    <field id="mad:appointmentDate" label-id="mad_appointmentDate"/>
+                    <field id="mad:complaints" label-id="mad_complaints">
+                        <control template="/org/alfresco/components/form/controls/textarea.ftl">
+                            <control-param name="style">width: 95%</control-param>
+                        </control>
+                    </field>
+                    <field id="transitions" set="trans" />
+                </appearance>
+            </form>
+        </forms>
+    </config>
+    <!--Acknowledgement-->
+    <config evaluator="task-type" condition="mad:acknowledgement">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="mad:patient"/>
+                    <show id="mad:doctor"/>
+                    <show id="mad:complaints" />
+                    <show id="mad:diagnosis" />
+                    <show id="mad:prescriptions" />
+                    <show id="transitions" />
+                </field-visibility>
+                <appearance>
+
+                    <set id="" appearance="title" label-id="workflow.set.general" />
+                    <set id="trans" appearance="" />
+
+                    <field id="mad:patient" label-id="mad_patient" read-only="true"/>
+                    <field id="mad:doctor" label-id="mad_doctor" read-only="true"/>
+                    <field id="mad:complaints" label-id="mad_complaints" read-only="true">
+                    </field>
+                    <field id="mad:diagnosis" label-id="mad_diagnosis" read-only="true">
+                    </field>
+                    <field id="mad:prescriptions" label-id="mad_prescriptions" read-only="true">
+                    </field>
+                    <field id="transitions" set="trans"/>
+                </appearance>
+            </form>
+        </forms>
+    </config>
 
 </alfresco-config>
