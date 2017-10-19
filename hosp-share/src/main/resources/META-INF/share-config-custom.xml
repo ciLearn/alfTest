@@ -32,7 +32,8 @@
             <separator name="sep1" display-label-id="Fill blank" component-generator="HeaderSeparatorGenerator" />
             <show-association name="mad:patient"/>
             <show-association name="mad:doctor"/>
-            <show-association name="mad:appointmentDate"/>
+            <show name="mad:datetime"/>
+            <!--<show-property name="mad:appointmentDate"/>-->
             <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
         </property-sheet>
     </config>
@@ -55,8 +56,9 @@
             <separator name="sep1" display-label-id="Fill blank" component-generator="HeaderSeparatorGenerator" />
             <show-association name="mad:patient"/>
             <show-association name="mad:doctor"/>
-            <show-association name="mad:appointmentDate"/>
-            <show-property name="mad:complaints" component-generator="TextAreaGenerator" />
+            <show name="mad:datetime1"/>
+            <show name="mad:complaints" component-generator="TextAreaGenerator" />
+            <show-property name="mad:corrOutcome" />
         </property-sheet>
     </config>
 
@@ -65,10 +67,9 @@
             <separator name="sep1" display-label-id="Patient info" component-generator="HeaderSeparatorGenerator" />
             <show-association name="mad:patient"/>
             <show-association name="mad:doctor"/>
-            <show-property name="mad:complaints"/>
-            <separator name="sep2" display-label-id="Diagnos and prescriptions" component-generator="HeaderSeparatorGenerator" />
-            <show-property name="mad:diagnosis"/>
-            <show-property name="mad:prescriptions"/>
+            <show name="mad:complaints"/>
+            <show name="mad:diagnosis"/>
+            <show name="mad:prescriptions"/>
         </property-sheet>
     </config>
 
@@ -105,7 +106,8 @@
                 <field-visibility>
                     <show id="mad:patient"/>
                     <show id="mad:doctor"/>
-                    <show id="mad:appointmentDate"/>
+                    <show id="mad:datetime"/>
+                  <!--  <show id="mad:appointmentDate"/>-->
                     <show id="mad:complaints" />
                     <show id="transitions" />
                 </field-visibility>
@@ -116,7 +118,8 @@
 
                     <field id="mad:patient" label-id="mad_patient" read-only="true"/>
                     <field id="mad:doctor" label-id="mad_doctor"/>
-                    <field id="mad:appointmentDate" label-id="mad_appointmentDate"/>
+                    <field id="mad:datetime" label-id="mad_datetime"/>
+                   <!-- <field id="mad:appointmentDate" label-id="mad_appointmentDate"/>-->
                     <field id="mad:complaints" label-id="mad_complaints">
                         <control template="/org/alfresco/components/form/controls/textarea.ftl">
                             <control-param name="style">width: 95%</control-param>
@@ -173,9 +176,9 @@
                 <field-visibility>
                     <show id="mad:patient"/>
                     <show id="mad:doctor"/>
-                    <show id="mad:appointmentDate"/>
+                    <show id="mad:datetime1"/>
                     <show id="mad:complaints" />
-                    <show id="transitions" />
+                    <show id="mad:corrOutcome" />
                 </field-visibility>
                 <appearance>
 
@@ -184,13 +187,15 @@
 
                     <field id="mad:patient" label-id="mad_patient" read-only="true"/>
                     <field id="mad:doctor" label-id="mad_doctor"/>
-                    <field id="mad:appointmentDate" label-id="mad_appointmentDate"/>
+                    <field id="mad:datetime1" label-id="mad_datetime1"/>
                     <field id="mad:complaints" label-id="mad_complaints">
                         <control template="/org/alfresco/components/form/controls/textarea.ftl">
                             <control-param name="style">width: 95%</control-param>
                         </control>
                     </field>
-                    <field id="transitions" set="trans" />
+                    <field id="mad:corrOutcome" label-id="workflow.field.outcome" >
+                        <control template="/org/alfresco/components/form/controls/workflow/activiti-transitions.ftl" />
+                    </field>
                 </appearance>
             </form>
         </forms>
