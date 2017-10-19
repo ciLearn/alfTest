@@ -30,10 +30,16 @@
 
         <type name="mad:fillblank">
             <parent>bpm:workflowTask</parent>
+            <properties>
+                <property name="mad:datetime">
+                    <type>d:datetime</type>
+                    <mandatory>true</mandatory>
+                </property>
+            </properties>
             <mandatory-aspects>
                 <aspect>mad:patient</aspect>
                 <aspect>mad:doctor</aspect>
-                <aspect>mad:appointmentDate</aspect>
+              <!--  <aspect>mad:appointmentDate</aspect>-->
                 <aspect>mad:complaints</aspect>
             </mandatory-aspects>
         </type>
@@ -69,11 +75,34 @@
         </type>
 
         <type name="mad:correction">
-            <parent>bpm:workflowTask</parent>
+            <parent>bpm:activitiOutcomeTask</parent>
+            <properties>
+                <property name="mad:corrOutcome">
+                    <type>d:text</type>
+                    <default>reject</default>
+                    <constraints>
+                        <constraint name="mad:propCorrOutcome" type="LIST">
+                            <parameter name="allowedValues">
+                                <list>
+                                    <value>approve</value>
+                                    <value>reject</value>
+                                </list>
+                            </parameter>
+                            <parameter name="caseSensitive">
+                                <value>true</value>
+                            </parameter>
+                        </constraint>
+                    </constraints>
+                </property>
+                <property name="mad:datetime1">
+                    <type>d:datetime</type>
+                    <mandatory>true</mandatory>
+                </property>
+            </properties>
             <mandatory-aspects>
                 <aspect>mad:patient</aspect>
                 <aspect>mad:doctor</aspect>
-                <aspect>mad:appointmentDate</aspect>
+               <!-- <aspect>mad:appointmentDate</aspect>-->
                 <aspect>mad:complaints</aspect>
             </mandatory-aspects>
         </type>
