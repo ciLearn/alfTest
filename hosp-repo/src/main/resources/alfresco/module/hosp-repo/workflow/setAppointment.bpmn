@@ -10,46 +10,31 @@
         <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[task.setVariable('mad_patient',initiator);
-							execution.setVariable('patient', initiator);]]>
+							execution.setVariable('mad_patient', initiator);]]>
 			</activiti:string>
           </activiti:field>
         </activiti:taskListener>
-        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string>var doctor = task.getVariable('mad_doctor');
-							var complaints = task.getVariable('mad_complaints');
-							var datetime = task.getVariable('mad_datetime'); 
-							execution.setVariable('doctor', doctor);
-							execution.setVariable('complaints',complaints);
-							execution.setVariable('datetime',datetime);
-							logger.log("Current complaints: " + complaints);
-							
-						<!--var mail = actions.create("mail");
-                            mail.parameters.to = doctor.properties.email;
-                            mail.parameters.subject = "Appointment with " + patient.properties.userName;
-                            mail.parameters.from = patient.properties.email;
-                            mail.parameters.text = "Your next appintment set to "+ datetime;
-                            mail.execute(bpm_package); -->
-							</activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
+        <activiti:taskListener event="complete" class="medads.platformsample.services.TestService"/>        
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow6" sourceRef="fillblank" targetRef="checktask"></sequenceFlow>
-    <userTask id="checktask" name="Fill out the results" activiti:assignee="${doctor.properties.userName}" activiti:formKey="mad:checktask">
+    <userTask id="checktask" name="Fill out the results" activiti:assignee="${mad_doctor.properties.userName}" activiti:formKey="mad:checktask">
       <extensionElements>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string><![CDATA[task.setVariable('mad_patient',execution.getVariable('patient'));
-						task.setVariable('mad_doctor',execution.getVariable('doctor'));
-						task.setVariable('mad_complaints',execution.getVariable('complaints'));]]></activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
+          <!--  <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
+              <activiti:field name="script">
+                  var mail = actions.create("mail");
+                  mail.parameters.to = mad_doctor.properties.email;
+                  mail.parameters.subject = "Appointment with " + mad_patient.properties.userName;
+                  mail.parameters.from = mad_patient.properties.email;
+                  mail.parameters.text = "Your next appintment set to "+ mad_datetime;
+                  mail.execute(bpm_package); 
+              </activiti:field>
+          </activiti:taskListener> -->
         <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
           <activiti:field name="script">
             <activiti:string><![CDATA[execution.setVariable('mad_appOutcome', task.getVariable('mad_appOutcome'));
-							execution.setVariable('diagnosis', task.getVariable('mad_diagnosis'));
-							execution.setVariable('prescriptions',task.getVariable('mad_prescriptions'));]]></activiti:string>
+							execution.setVariable('mad_diagnosis', task.getVariable('mad_diagnosis'));
+							execution.setVariable('mad_prescriptions',task.getVariable('mad_prescriptions'));]]></activiti:string>
           </activiti:field>
         </activiti:taskListener>
       </extensionElements>
@@ -59,39 +44,23 @@
     <sequenceFlow id="flow4" sourceRef="exclusivegateway1" targetRef="correction">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${mad_appOutcome == 'reject'}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="correction" name="Request correction" activiti:assignee="${patient.properties.userName}" activiti:formKey="mad:correction">
+    <userTask id="correction" name="Request correction" activiti:assignee="${mad_patient.properties.userName}" activiti:formKey="mad:correction">
       <extensionElements>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string><![CDATA[task.setVariable('mad_patient',execution.getVariable('patient'));
-							task.setVariable('mad_doctor',execution.getVariable('doctor'));
-							task.setVariable('mad_complaints',execution.getVariable('complaints'));]]></activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-        <activiti:taskListener event="complete" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
+        <activiti:taskListener event="complete" class="medads.platformsample.services.TestService">
+         <!--  <activiti:field name="script">
             <activiti:string><![CDATA[var complaints = task.getVariable('mad_complaints');
                             execution.setVariable('mad_corrOutcome', task.getVariable('mad_corrOutcome'));
 							execution.setVariable('appointment', task.getVariable('mad_appointment'));
 							execution.setVariable('datetime',task.getVariable('mad_datetime1'));
 							execution.setVariable('complaints',complaints);]]></activiti:string>
-          </activiti:field>
+          </activiti:field> -->
         </activiti:taskListener>
       </extensionElements>
     </userTask>
     <sequenceFlow id="flow5" sourceRef="exclusivegateway2" targetRef="checktask">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${mad_corrOutcome == 'approve'}]]></conditionExpression>
     </sequenceFlow>
-    <userTask id="acknowledgement" name="Results acknowledgement" activiti:assignee="${patient.properties.userName}" activiti:formKey="mad:acknowledgement">
-      <extensionElements>
-        <activiti:taskListener event="create" class="org.alfresco.repo.workflow.activiti.tasklistener.ScriptTaskListener">
-          <activiti:field name="script">
-            <activiti:string><![CDATA[task.setVariable('mad_diagnosis',execution.getVariable('diagnosis'));
-							task.setVariable('mad_prescriptions',execution.getVariable('prescriptions'));
-							task.setVariable('mad_complaints',execution.getVariable('complaints'));]]></activiti:string>
-          </activiti:field>
-        </activiti:taskListener>
-      </extensionElements>
+    <userTask id="acknowledgement" name="Results acknowledgement" activiti:assignee="${mad_patient.properties.userName}" activiti:formKey="mad:acknowledgement">
     </userTask>
     <sequenceFlow id="flow7" sourceRef="exclusivegateway1" targetRef="acknowledgement">
       <conditionExpression xsi:type="tFormalExpression"><![CDATA[${mad_appOutcome == 'approve'}]]></conditionExpression>

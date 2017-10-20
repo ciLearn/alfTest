@@ -49,5 +49,14 @@
         </type>
 
     </types>
+    <aspects>
+        <aspect name="ma:appoint">
+            <properties>
+                <property name="ma:appDate">
+                    <type>d:datetime</type>
+                </property>
+            </properties>
+        </aspect>
+    </aspects>
 
 </model>
