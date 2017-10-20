@@ -118,7 +118,10 @@
 
                     <field id="mad:patient" label-id="mad_patient" read-only="true"/>
                     <field id="mad:doctor" label-id="mad_doctor"/>
-                    <field id="mad:datetime" label-id="mad_datetime"/>
+                    <field id="mad:datetime" label-id="mad_datetime">
+                        <control template="/org/alfresco/components/form/controls/date.ftl">
+                        </control>
+                    </field>
                    <!-- <field id="mad:appointmentDate" label-id="mad_appointmentDate"/>-->
                     <field id="mad:complaints" label-id="mad_complaints">
                         <control template="/org/alfresco/components/form/controls/textarea.ftl">
